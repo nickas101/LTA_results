@@ -10,6 +10,15 @@ from tkinter.ttk import Progressbar
 from tkinter import ttk
 from tkinter.ttk import Combobox 
 
+import matplotlib
+import matplotlib.pyplot as plt
+import glob
+import os
+from os.path import splitext
+from mpl_toolkits.axes_grid1 import host_subplot
+import mpl_toolkits.axisartist as AA
+
+
 
 
 def main():
@@ -21,6 +30,9 @@ def main():
                         "Trusted_Connection=yes;")
 
 
+    
+    unit_name = 'test1'
+    
     # if all_units:
     #     command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP"
     # elif crystalType == '':
@@ -35,11 +47,13 @@ def main():
     #         command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator <> 'Mousetrap' and runData.crystalType = " + crystalType
 
 
-    command = "select * from measData where measData.fk_locID = '0A51A4A0-6FB2-4D69-93B0-5E04659C5C71'"
+    command = "select * from measData where measData.fk_locID = '0A51A4A0-6FB2-4D69-93B0-5E04659C5C71' and measData.frq <> '9999'"
 
 
     df = pd.read_sql(command, connection)
     result = df
+
+    df.sort_values(['measDate'], ascending=[True], inplace=True)
 
     # df = df.drop(columns=[
     #     'pk_locID', 
@@ -129,6 +143,43 @@ def main():
     path = r"\\rakdata2\Share\Nikolai\serial\sql_results\\" 
     filename = path + 'result.csv'
     result.to_csv(filename, encoding = 'utf-8')
+
+
+
+    figFvI = plt.figure(figsize = (20,12))
+
+    fviHost = host_subplot(111)
+    plt.subplots_adjust(right = 1) # Was 0.5
+
+    plotTitle = "\nPhase Noise for " + str(unit_name)
+    fviHost.set_title(plotTitle)
+    fviHost.set_xlabel('Time, ', color='r')
+    fviHost.set_ylabel('Frequency, Hz', color='b')
+
+    fviHost.tick_params(axis = 'y', colors = 'b')
+    fviHost.tick_params(axis = 'x', colors = 'r')
+
+    fviHost.plot(df['measDate'], df['frq'], color='b', alpha = 1, label = "Residual", linewidth=.5)
+    # fviHost.plot(df_raw['Offset Frequency (Hz)'], df_raw['PN_FLT'], color='b', alpha = 0.5, label = "Residual", linewidth=1)
+    fviHost.set_xscale('log')
+
+    # Show the major grid lines with dark grey lines
+    fviHost.grid(b=True, which='major', color='#666666', linestyle='-', alpha=0.5)
+
+    # Show the minor grid lines with very faint and almost transparent grey lines
+    fviHost.minorticks_on()
+    fviHost.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
+
+    
+    # save_plot = path + r'\\results//' + str(unit_name) + '.png'
+    save_plot = path + r'//' + str(unit_name) + '.png'
+    figFvI.savefig(save_plot, bbox_inches = 'tight')
+
+    plt.close(figFvI)
+
+
+
+
 
     msg_finish = Tk()
     msg_finish.withdraw()
