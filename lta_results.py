@@ -1,5 +1,6 @@
 import os
 import sys
+import glob
 import pyodbc 
 from pandas import DataFrame
 import pandas as pd
@@ -10,10 +11,12 @@ from tkinter.ttk import Progressbar
 from tkinter import ttk
 from tkinter.ttk import Combobox 
 
+import numpy
+from numpy import copy
+import scipy.ndimage as ndimage
+
 import matplotlib
 import matplotlib.pyplot as plt
-import glob
-import os
 from os.path import splitext
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
@@ -51,9 +54,20 @@ def main():
 
 
     df = pd.read_sql(command, connection)
-    result = df
+    
 
     df.sort_values(['measDate'], ascending=[True], inplace=True)
+
+    df_freq = df['frq']
+
+    # gaussian filter
+    df_filtered = ndimage.gaussian_filter(df_freq, sigma=3, order=0)
+
+    df['frq_flt'] = df_filtered
+
+
+
+    result = df
 
     # df = df.drop(columns=[
     #     'pk_locID', 
@@ -146,7 +160,9 @@ def main():
 
 
 
-    figFvI = plt.figure(figsize = (20,12))
+
+
+    figFvI = plt.figure(figsize = (16,10))
 
     fviHost = host_subplot(111)
     plt.subplots_adjust(right = 1) # Was 0.5
@@ -176,6 +192,42 @@ def main():
     figFvI.savefig(save_plot, bbox_inches = 'tight')
 
     plt.close(figFvI)
+
+
+
+
+
+
+    figFvIF = plt.figure(figsize = (16,10))
+
+    fviHostF = host_subplot(111)
+    plt.subplots_adjust(right = 1) # Was 0.5
+
+    plotTitle = "\nPhase Noise for " + str(unit_name)
+    fviHostF.set_title(plotTitle)
+    fviHostF.set_xlabel('Time, ', color='r')
+    fviHostF.set_ylabel('Frequency, Hz', color='b')
+
+    fviHostF.tick_params(axis = 'y', colors = 'b')
+    fviHostF.tick_params(axis = 'x', colors = 'r')
+
+    fviHostF.plot(df['measDate'], df['frq_flt'], color='b', alpha = 1, label = "Residual", linewidth=.5)
+    # fviHost.plot(df_raw['Offset Frequency (Hz)'], df_raw['PN_FLT'], color='b', alpha = 0.5, label = "Residual", linewidth=1)
+    fviHostF.set_xscale('log')
+
+    # Show the major grid lines with dark grey lines
+    fviHostF.grid(b=True, which='major', color='#666666', linestyle='-', alpha=0.5)
+
+    # Show the minor grid lines with very faint and almost transparent grey lines
+    fviHostF.minorticks_on()
+    fviHostF.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
+
+    
+    # save_plot = path + r'\\results//' + str(unit_name) + '.png'
+    save_plot = path + r'//' + str(unit_name) + '_smoothed.png'
+    figFvIF.savefig(save_plot, bbox_inches = 'tight')
+
+    plt.close(figFvIF)
 
 
 
