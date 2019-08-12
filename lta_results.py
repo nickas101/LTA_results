@@ -21,101 +21,104 @@ def main():
                         "Trusted_Connection=yes;")
 
 
-    if all_units:
-        command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP"
-    elif crystalType == '':
-        if moustrap:
-            command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator = 'Mousetrap'"
-        else:
-            command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator <> 'Mousetrap'"
-    else:
-        if moustrap:
-            command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator = 'Mousetrap' and runData.crystalType = " + crystalType
-        else:
-            command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator <> 'Mousetrap' and runData.crystalType = " + crystalType
+    # if all_units:
+    #     command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP"
+    # elif crystalType == '':
+    #     if moustrap:
+    #         command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator = 'Mousetrap'"
+    #     else:
+    #         command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator <> 'Mousetrap'"
+    # else:
+    #     if moustrap:
+    #         command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator = 'Mousetrap' and runData.crystalType = " + crystalType
+    #     else:
+    #         command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator <> 'Mousetrap' and runData.crystalType = " + crystalType
 
+
+    command = "select * from measData where measData.fk_locID = '0A51A4A0-6FB2-4D69-93B0-5E04659C5C71'"
 
 
     df = pd.read_sql(command, connection)
+    result = df
 
-    df = df.drop(columns=[
-        'pk_locID', 
-        'fk_runID', 
-        'fk_brdID', 
-        'fk_ovenID', 
-        'pk_brdID', 
-        'status', 
-        'vchar',
-        'pk_runID',
-        'ppmStartDate',
-        'operator',
-        'limUpper',
-        'limLower',
-        'email',
-        'emailSent',
-        'emailNoteTime',
-        'opemail',
-        'sendemail',
-        'sendopemail',
-        'prodMonitoring',
-        'standardProduction',
-        'limUpper1',
-        'limLower1',
-        'hotStore',
-        'processExperiment',
-        'designExperiment',
-        'returnUnits',
-        'freqDivider',
-        'rma',
-        'currentRun',
-        'sealingMethod',
-        'glue'
-        ]) 
+    # df = df.drop(columns=[
+    #     'pk_locID', 
+    #     'fk_runID', 
+    #     'fk_brdID', 
+    #     'fk_ovenID', 
+    #     'pk_brdID', 
+    #     'status', 
+    #     'vchar',
+    #     'pk_runID',
+    #     'ppmStartDate',
+    #     'operator',
+    #     'limUpper',
+    #     'limLower',
+    #     'email',
+    #     'emailSent',
+    #     'emailNoteTime',
+    #     'opemail',
+    #     'sendemail',
+    #     'sendopemail',
+    #     'prodMonitoring',
+    #     'standardProduction',
+    #     'limUpper1',
+    #     'limLower1',
+    #     'hotStore',
+    #     'processExperiment',
+    #     'designExperiment',
+    #     'returnUnits',
+    #     'freqDivider',
+    #     'rma',
+    #     'currentRun',
+    #     'sealingMethod',
+    #     'glue'
+    #     ]) 
 
-    df['startDate'] = df['startDate'].dt.date
-    df['finishDate'] = df['finishDate'].dt.date
+    # df['startDate'] = df['startDate'].dt.date
+    # df['finishDate'] = df['finishDate'].dt.date
 
-    # df.replace(to_replace='oven320', value='')
+    # # df.replace(to_replace='oven320', value='')
 
-    df = df.set_index('runNumber')
+    # df = df.set_index('runNumber')
 
-    df['nomFrq'] = df['nomFrq']/1000000
-    df['nomFrq'] = round(df['nomFrq'],2)
-
-
-    df.sort_values(['runNumber', 'brd', 'loc'], ascending=[True, True, True], inplace=True)
-
-    # df['amount'] = df.groupby(['runNumber'])['brd'].count()
-
-    # df['locs'] = df.groupby(['runNumber'])['brd'].prod()
-
-    df['locs'] = df['loc'].astype(str)
-
-    df1 = df.groupby(['runNumber'])['locs'].apply(','.join).reset_index()
-
-    # df1['board'] = df['brd']
-
-    df1 = df1.set_index('runNumber')
+    # df['nomFrq'] = df['nomFrq']/1000000
+    # df['nomFrq'] = round(df['nomFrq'],2)
 
 
+    # df.sort_values(['runNumber', 'brd', 'loc'], ascending=[True, True, True], inplace=True)
 
-    df = df.drop(columns=['loc', 'locs'])
+    # # df['amount'] = df.groupby(['runNumber'])['brd'].count()
+
+    # # df['locs'] = df.groupby(['runNumber'])['brd'].prod()
+
+    # df['locs'] = df['loc'].astype(str)
+
+    # df1 = df.groupby(['runNumber'])['locs'].apply(','.join).reset_index()
+
+    # # df1['board'] = df['brd']
+
+    # df1 = df1.set_index('runNumber')
 
 
 
-    df1['nbr'] = df.groupby(['runNumber'])['brd'].count()
+    # df = df.drop(columns=['loc', 'locs'])
 
-    # print(df)
 
-    result = pd.concat([df1, df], axis=1, join='inner')
 
-    result = result.drop_duplicates() 
+    # df1['nbr'] = df.groupby(['runNumber'])['brd'].count()
 
-    result.sort_values(['brd', 'runNumber'], ascending=[True, True], inplace=True)
+    # # print(df)
 
-    # ******************************
+    # result = pd.concat([df1, df], axis=1, join='inner')
 
-    result = result.set_index('brd')
+    # result = result.drop_duplicates() 
+
+    # result.sort_values(['brd', 'runNumber'], ascending=[True, True], inplace=True)
+
+    # # ******************************
+
+    # result = result.set_index('brd')
     # df = df.drop(columns=['runNumber'])
 
     # ******************************
