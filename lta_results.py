@@ -1,7 +1,7 @@
 import os
 import sys
 import pyodbc 
-# from pandas import DataFrame
+from pandas import DataFrame
 import pandas as pd
 
 from tkinter import *
