@@ -21,6 +21,10 @@ from os.path import splitext
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
 
+import matplotlib.dates as mdates
+
+from pandas.plotting import register_matplotlib_converters
+
 
 
 
@@ -35,6 +39,8 @@ def main():
 
     
     unit_name = 'test1'
+
+    register_matplotlib_converters()
     
     # if all_units:
     #     command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP"
