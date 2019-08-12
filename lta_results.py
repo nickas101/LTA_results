@@ -39,6 +39,7 @@ def main():
 
     
     unit_name = 'test1'
+    freq_nom = 26
 
     register_matplotlib_converters()
     
@@ -60,16 +61,23 @@ def main():
 
 
     df = pd.read_sql(command, connection)
+
+    freq_nom_hz = freq_nom * 1000000
     
 
     df.sort_values(['measDate'], ascending=[True], inplace=True)
 
     df_freq = df['frq']
+    df_freq_ppm = 1000000 * (df_freq - freq_nom_hz)/freq_nom_hz
+    df['frq_ppm'] = df_freq_ppm
 
     # gaussian filter
     df_filtered = ndimage.gaussian_filter(df_freq, sigma=25, order=0)
 
     df['frq_flt'] = df_filtered
+
+    df_freq_ppm_filtered = 1000000 * (df_filtered - freq_nom_hz)/freq_nom_hz
+    df['frq_ppm_filtered'] = df_freq_ppm_filtered
 
 
 
@@ -176,12 +184,12 @@ def main():
     plotTitle = "\nAgeing data " + str(unit_name)
     fviHost.set_title(plotTitle)
     fviHost.set_xlabel('Time, ', color='r')
-    fviHost.set_ylabel('Frequency, Hz', color='b')
+    fviHost.set_ylabel('Frequency, ppm', color='b')
 
     fviHost.tick_params(axis = 'y', colors = 'b')
     fviHost.tick_params(axis = 'x', colors = 'r')
 
-    fviHost.plot(df['measDate'], df['frq'], color='b', alpha = 1, label = "Residual", linewidth=.5)
+    fviHost.plot(df['measDate'], df['frq_ppm'], color='b', alpha = 1, label = "Residual", linewidth=.5)
     # fviHost.plot(df_raw['Offset Frequency (Hz)'], df_raw['PN_FLT'], color='b', alpha = 0.5, label = "Residual", linewidth=1)
     # fviHost.set_xscale('log')
 
@@ -212,12 +220,12 @@ def main():
     plotTitle = "\nAgeing data " + str(unit_name) + " (smoothed)"
     fviHostF.set_title(plotTitle)
     fviHostF.set_xlabel('Time, ', color='r')
-    fviHostF.set_ylabel('Frequency, Hz', color='b')
+    fviHostF.set_ylabel('Frequency, ppm', color='b')
 
     fviHostF.tick_params(axis = 'y', colors = 'b')
     fviHostF.tick_params(axis = 'x', colors = 'r')
 
-    fviHostF.plot(df['measDate'], df['frq_flt'], color='b', alpha = 1, label = "Residual", linewidth=1)
+    fviHostF.plot(df['measDate'], df['frq_ppm_filtered'], color='b', alpha = 1, label = "Residual", linewidth=1)
     # fviHost.plot(df_raw['Offset Frequency (Hz)'], df_raw['PN_FLT'], color='b', alpha = 0.5, label = "Residual", linewidth=1)
     # fviHostF.set_xscale('log')
 
