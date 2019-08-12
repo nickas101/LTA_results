@@ -67,7 +67,7 @@ def main():
     df_freq = df['frq']
 
     # gaussian filter
-    df_filtered = ndimage.gaussian_filter(df_freq, sigma=3, order=0)
+    df_filtered = ndimage.gaussian_filter(df_freq, sigma=25, order=0)
 
     df['frq_flt'] = df_filtered
 
@@ -173,7 +173,7 @@ def main():
     fviHost = host_subplot(111)
     plt.subplots_adjust(right = 1) # Was 0.5
 
-    plotTitle = "\nPhase Noise for " + str(unit_name)
+    plotTitle = "\nAgeing data " + str(unit_name)
     fviHost.set_title(plotTitle)
     fviHost.set_xlabel('Time, ', color='r')
     fviHost.set_ylabel('Frequency, Hz', color='b')
@@ -209,7 +209,7 @@ def main():
     fviHostF = host_subplot(111)
     plt.subplots_adjust(right = 1) # Was 0.5
 
-    plotTitle = "\nPhase Noise for " + str(unit_name)
+    plotTitle = "\nAgeing data " + str(unit_name) + " (smoothed)"
     fviHostF.set_title(plotTitle)
     fviHostF.set_xlabel('Time, ', color='r')
     fviHostF.set_ylabel('Frequency, Hz', color='b')
