@@ -183,7 +183,7 @@ def main():
 
     fviHost.plot(df['measDate'], df['frq'], color='b', alpha = 1, label = "Residual", linewidth=.5)
     # fviHost.plot(df_raw['Offset Frequency (Hz)'], df_raw['PN_FLT'], color='b', alpha = 0.5, label = "Residual", linewidth=1)
-    fviHost.set_xscale('log')
+    # fviHost.set_xscale('log')
 
     # Show the major grid lines with dark grey lines
     fviHost.grid(b=True, which='major', color='#666666', linestyle='-', alpha=0.5)
@@ -217,9 +217,12 @@ def main():
     fviHostF.tick_params(axis = 'y', colors = 'b')
     fviHostF.tick_params(axis = 'x', colors = 'r')
 
-    fviHostF.plot(df['measDate'], df['frq_flt'], color='b', alpha = 1, label = "Residual", linewidth=.5)
+    fviHostF.plot(df['measDate'], df['frq_flt'], color='b', alpha = 1, label = "Residual", linewidth=1)
     # fviHost.plot(df_raw['Offset Frequency (Hz)'], df_raw['PN_FLT'], color='b', alpha = 0.5, label = "Residual", linewidth=1)
-    fviHostF.set_xscale('log')
+    # fviHostF.set_xscale('log')
+
+    # xfmt = mdates.DateFormatter('%d-%m-%y %H:%M')
+    # fviHostF.xaxis.set_major_formatter(xfmt)
 
     # Show the major grid lines with dark grey lines
     fviHostF.grid(b=True, which='major', color='#666666', linestyle='-', alpha=0.5)
