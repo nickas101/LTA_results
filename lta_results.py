@@ -57,10 +57,18 @@ def main():
     #         command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP and runData.oscillator <> 'Mousetrap' and runData.crystalType = " + crystalType
 
 
-    command = "select * from measData where measData.fk_locID = '0A51A4A0-6FB2-4D69-93B0-5E04659C5C71' and measData.frq <> '9999'"
+    command = "select * from measData where measData.fk_locID = '5A09D288-6325-431E-9664-ED7CA5A44FAE' and measData.frq <> '9999'"
 
 
     df = pd.read_sql(command, connection)
+
+    # **********************************************************
+
+    # print(df)
+
+    # sys.exit()
+
+    # **********************************************************
 
     freq_nom_hz = freq_nom * 1000000
     
