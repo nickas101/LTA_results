@@ -25,6 +25,11 @@ import matplotlib.dates as mdates
 
 from pandas.plotting import register_matplotlib_converters
 
+# import PyQt5 QtCore and QtGui modules
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtGui import *
+from PyQt5 import uic
+
 
 
 
@@ -258,89 +263,62 @@ def main():
 
 
 
-    msg_finish = Tk()
-    msg_finish.withdraw()
-    msg_finish=messagebox.showinfo("Done","Results are in: " + filename)
+    # msg_finish = Tk()
+    # msg_finish.withdraw()
+    # msg_finish=messagebox.showinfo("Done","Results are in: " + filename)
     sys.exit()
 
 
 
 def clicked_start():
-    
-    global crystalType
-    global moustrap
-    global all_units
-    
-    crystalType = combo.get()
-    moustrap = chk_state.get()
-    all_units = chk2_state.get()
-    
-
-    if crystalType == 'All types':
-        crystalType = ''
-    else:
-        crystalType = "'" + crystalType + "'"
-
-    print(crystalType)
-
-    root.destroy()
+    # root.destroy()
     main()
 
 
 def clicked():
-
-    if chk2_state.get():
-        chk.configure(state='disabled')  
-        combo.configure(state='disabled')
-
-    else:
-        chk.configure(state = 'normal')  
-        combo.configure(state = 'normal')
+    pass
 
 
-
-
-
-# User settings
-# **************************
-
-moustrap = False
-all_units = True
-crystalType = "'RSX-5'"
 
 
 # **************************
 
-root = Tk()
-root.title('Overdue crystals')
-root.geometry('310x180+350+250')
+( Ui_MainWindow, QMainWindow ) = uic.loadUiType( '1.ui' )
+ 
+class MainWindow ( QMainWindow ):
+    """MainWindow inherits QMainWindow"""
+ 
+    def __init__ ( self, parent = None ):
+        QMainWindow.__init__( self, parent )
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi( self )
+ 
+    def __del__ ( self ):
+        self.ui = None
+ 
+#-----------------------------------------------------#
+if __name__ == '__main__':
+ 
+    # create application
+    app = QApplication( sys.argv )
+    app.setApplicationName( 'hello' )
+ 
+    # create widget
+    w = MainWindow()
+    w.setWindowTitle('hello' )
+    w.show()
+ 
+ 
+    # execute application
+    sys.exit( app.exec_() )
 
-chk_state = BooleanVar()  
-chk_state.set(moustrap) 
-chk = Checkbutton(root, text='Moustrap', var=chk_state)  
-chk.grid(column = 0, row = 1)
+# root = Tk()
+# root.title('Overdue crystals')
+# root.geometry('310x180+350+250')
 
 
-lbl = Label(root, text="Crtystal Type")
-lbl.grid(column=0, row=2, sticky=E)
 
-combo = Combobox(root)  
-combo['values'] = ('All types', 'RSX-5', 'RSX-5B', 'RSX-10', 'RSX-11')  
-combo.current(0) 
-combo.grid(column = 1, row = 2)  
+# btn_start = Button(root, text = "Start", bg='green',fg='white', font='arial 18', command = clicked_start)
+# btn_start.grid(column = 2, row = 30, sticky=W)
 
-chk2_state = BooleanVar()  
-chk2_state.set(False) 
-chk2 = Checkbutton(root, text='All units', var=chk2_state, command = clicked)
-chk2.grid(column = 0, row = 3)
-
-lbl_103 = Label(root, text="")
-lbl_103.grid(column=1, row=18)
-lbl_104 = Label(root, text="")
-lbl_104.grid(column=1, row=19)
-
-
-btn_start = Button(root, text = "Start", bg='green',fg='white', font='arial 18', command = clicked_start)
-btn_start.grid(column = 2, row = 30, sticky=W)
-
-root.mainloop()
+# root.mainloop()
