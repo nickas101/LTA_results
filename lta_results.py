@@ -26,9 +26,15 @@ import matplotlib.dates as mdates
 from pandas.plotting import register_matplotlib_converters
 
 # import PyQt5 QtCore and QtGui modules
-from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
+# from PyQt5.QtGui import *
+# from PyQt5.QtCore import pyqtSlot
 from PyQt5 import uic
+
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+# import gui
 
 
 
@@ -259,24 +265,8 @@ def main():
 
     plt.close(figFvIF)
 
-
-
-
-
-    # msg_finish = Tk()
-    # msg_finish.withdraw()
-    # msg_finish=messagebox.showinfo("Done","Results are in: " + filename)
     sys.exit()
 
-
-
-def clicked_start():
-    # root.destroy()
-    main()
-
-
-def clicked():
-    pass
 
 
 
@@ -292,33 +282,27 @@ class MainWindow ( QMainWindow ):
         QMainWindow.__init__( self, parent )
         self.ui = Ui_MainWindow()
         self.ui.setupUi( self )
+        self.ui.pushButton.clicked.connect(self.buttonClicked)
+
  
     def __del__ ( self ):
         self.ui = None
+
+    def buttonClicked(self):
+        main()
  
 #-----------------------------------------------------#
 if __name__ == '__main__':
  
     # create application
     app = QApplication( sys.argv )
-    app.setApplicationName( 'hello' )
+    app.setApplicationName( 'LTA results' )
  
     # create widget
     w = MainWindow()
-    w.setWindowTitle('hello' )
+    w.setWindowTitle('LTA results' )
     w.show()
  
  
     # execute application
     sys.exit( app.exec_() )
-
-# root = Tk()
-# root.title('Overdue crystals')
-# root.geometry('310x180+350+250')
-
-
-
-# btn_start = Button(root, text = "Start", bg='green',fg='white', font='arial 18', command = clicked_start)
-# btn_start.grid(column = 2, row = 30, sticky=W)
-
-# root.mainloop()
