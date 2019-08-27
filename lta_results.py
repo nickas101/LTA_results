@@ -5,36 +5,18 @@ import pyodbc
 from pandas import DataFrame
 import pandas as pd
 
-from tkinter import *
-from tkinter import messagebox
-from tkinter.ttk import Progressbar
-from tkinter import ttk
-from tkinter.ttk import Combobox 
 
-import numpy
-from numpy import copy
-import scipy.ndimage as ndimage
+import numpy as np
+
+from PyQt5 import QtCore, QtWidgets, uic
 
 import matplotlib
-import matplotlib.pyplot as plt
-from os.path import splitext
-from mpl_toolkits.axes_grid1 import host_subplot
-import mpl_toolkits.axisartist as AA
+matplotlib.use('QT5Agg')
 
-import matplotlib.dates as mdates
+import matplotlib.pylab as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvas 
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
-from pandas.plotting import register_matplotlib_converters
-
-# import PyQt5 QtCore and QtGui modules
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
-# from PyQt5.QtGui import *
-# from PyQt5.QtCore import pyqtSlot
-from PyQt5 import uic
-
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-# import gui
 
 
 
@@ -52,7 +34,7 @@ def main():
     unit_name = 'test1'
     freq_nom = 26
 
-    register_matplotlib_converters()
+    # register_matplotlib_converters()
     
     # if all_units:
     #     command = "select * from locData join brdData on locData.fk_brdID = brdData.pk_brdID join runData on runData.pk_runID = locData.fk_runID where runData.currentRun = 'True' and runData.finishDate < CURRENT_TIMESTAMP"
@@ -273,36 +255,43 @@ def main():
 
 # **************************
 
-( Ui_MainWindow, QMainWindow ) = uic.loadUiType( '1.ui' )
- 
-class MainWindow ( QMainWindow ):
-    """MainWindow inherits QMainWindow"""
- 
-    def __init__ ( self, parent = None ):
-        QMainWindow.__init__( self, parent )
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi( self )
-        self.ui.pushButton.clicked.connect(self.buttonClicked)
+class MyWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(MyWindow, self).__init__()
+        uic.loadUi('2.ui', self) 
 
- 
-    def __del__ ( self ):
-        self.ui = None
+        self.pushButton.clicked.connect(self.buttonClicked)
+
+        
 
     def buttonClicked(self):
-        main()
- 
-#-----------------------------------------------------#
+        # test data
+        data = np.array([0.7,0.7,0.7,0.8,0.9,0.9,1.5,1.5,1.5,1.5])        
+        fig, ax1 = plt.subplots()
+        bins = np.arange(0.6, 1.62, 0.02)
+        n1, bins1, patches1 = ax1.hist(data, bins, alpha=0.6, density=False, cumulative=False)
+
+        # plot
+        self.plotWidget = FigureCanvas(fig)
+        lay = QtWidgets.QVBoxLayout(self.plot1)  
+        lay.setContentsMargins(0, 0, 0, 0)      
+        lay.addWidget(self.plotWidget)
+        # add toolbar
+        self.addToolBar(QtCore.Qt.BottomToolBarArea, NavigationToolbar(self.plotWidget, self))
+
 if __name__ == '__main__':
- 
-    # create application
-    app = QApplication( sys.argv )
-    app.setApplicationName( 'LTA results' )
- 
-    # create widget
-    w = MainWindow()
-    w.setWindowTitle('LTA results' )
-    w.show()
- 
+
+    app = QtWidgets.QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    sys.exit(app.exec_())
+
+
+
+
+
+
+
  
     # execute application
-    sys.exit( app.exec_() )
+    # sys.exit( app.exec_() )
