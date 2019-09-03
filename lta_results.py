@@ -6,6 +6,7 @@ from pandas import DataFrame
 import pandas as pd
 
 
+import scipy.ndimage as ndimage
 import numpy as np
 
 from PyQt5 import QtCore, QtWidgets, uic
