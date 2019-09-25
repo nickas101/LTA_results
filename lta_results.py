@@ -295,6 +295,13 @@ class MyWindow(QtWidgets.QMainWindow):
 
         print(df.iloc[index])
 
+        freq = str(df['nomFrq'].iloc[index] / 1000000) + "MHz"
+        purpose = str(df['purpose'].iloc[index])
+
+
+        self.label12.setText(str(freq))
+        self.label101.setText(purpose)
+
         return self.listWidget.currentRow()
 
     def buttonClicked(self):
@@ -304,6 +311,9 @@ class MyWindow(QtWidgets.QMainWindow):
         # df = main(search_text)
         main(search_text)
         self.listWidget.clear()
+
+        self.label12.clear()
+        self.label101.clear()
 
         print(df['purpose'])
 
