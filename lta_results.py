@@ -315,10 +315,14 @@ class MyWindow(QtWidgets.QMainWindow):
 
         freq = str(df['nomFrq'].iloc[index] / 1000000) + "MHz"
         purpose = str(df['purpose'].iloc[index])
+        crystal_type = str(df['crystalType'].iloc[index])
+        owner = str(df['owner'].iloc[index])
 
 
         self.label12.setText(str(freq))
         self.label101.setText(purpose)
+        self.label_7.setText(crystal_type)
+        self.label_15.setText(owner)
 
         return self.listWidget.currentRow()
 
@@ -332,6 +336,8 @@ class MyWindow(QtWidgets.QMainWindow):
 
         self.label12.clear()
         self.label101.clear()
+        self.label_7.clear()
+        self.label_15.clear()
 
         print(df['purpose'])
 
