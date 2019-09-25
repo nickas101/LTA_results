@@ -9,7 +9,9 @@ import pandas as pd
 import scipy.ndimage as ndimage
 import numpy as np
 
+from mpl_toolkits.axes_grid1 import host_subplot
 from PyQt5 import QtCore, QtWidgets, uic
+from PyQt5.QtGui import QIcon
 
 import matplotlib
 matplotlib.use('QT5Agg')
@@ -17,6 +19,9 @@ matplotlib.use('QT5Agg')
 import matplotlib.pylab as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvas 
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+
+from matplotlib.figure import Figure
+from matplotlib import animation
 
 
 
@@ -80,6 +85,9 @@ def main():
 
     df_freq_ppm_filtered = 1000000 * (df_filtered - freq_nom_hz)/freq_nom_hz
     df['frq_ppm_filtered'] = df_freq_ppm_filtered
+
+
+
 
 
 
@@ -248,7 +256,9 @@ def main():
 
     plt.close(figFvIF)
 
-    sys.exit()
+    return df
+
+    # sys.exit()
 
 
 
@@ -256,27 +266,56 @@ def main():
 
 # **************************
 
+# print(os.getcwd())
+# sys.exit()
+
+# project_path = r"\\Akl-file-01\Departments\Engineering - Product R&D\Stored Files\Nikolai\scripts\LTA_results\\"
+
 class MyWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
-        uic.loadUi('2.ui', self) 
+        uic.loadUi('2.ui', self)
 
-        self.pushButton.clicked.connect(self.buttonClicked)
+        self.setWindowIcon(QIcon('banana.png'))
+        self.setWindowTitle("LTA results")
+
+        self.pushButton_2.clicked.connect(self.buttonClicked)
 
         
 
     def buttonClicked(self):
+
+        df = main()
+
         # test data
-        data = np.array([0.7,0.7,0.7,0.8,0.9,0.9,1.5,1.5,1.5,1.5])        
+        # data = np.array([0.7,0.7,0.7,0.8,0.9,0.9,1.5,1.5,1.5,1.5])        
         fig, ax1 = plt.subplots()
-        bins = np.arange(0.6, 1.62, 0.02)
-        n1, bins1, patches1 = ax1.hist(data, bins, alpha=0.6, density=False, cumulative=False)
+        # bins = np.arange(0.6, 1.62, 0.02)
+
+        data = df['frq_ppm_filtered'].to_numpy()
+        bins = df['measDate'].to_numpy()
+
+        bins = bins.astype(float)
+
+
+
+        print(data)
+        print(bins)
+
+        # n1, bins1, patches1 = ax1.hist(data, bins, alpha=0.6, density=False, cumulative=False)
+
+
+        ax1.plot(bins, data, color='b', alpha = 1, label = "LTA", linewidth=1)
+        fig.tight_layout()
+
 
         # plot
         self.plotWidget = FigureCanvas(fig)
         lay = QtWidgets.QVBoxLayout(self.plot1)  
         lay.setContentsMargins(0, 0, 0, 0)      
         lay.addWidget(self.plotWidget)
+
+        
         # add toolbar
         self.addToolBar(QtCore.Qt.BottomToolBarArea, NavigationToolbar(self.plotWidget, self))
 
