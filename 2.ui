@@ -52,7 +52,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>125</width>
+            <width>275</width>
             <height>16777215</height>
            </size>
           </property>
@@ -75,6 +75,9 @@
           <property name="text">
            <string>Search</string>
           </property>
+          <property name="shortcut">
+           <string>Return</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -89,7 +92,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>200</width>
+          <width>350</width>
           <height>16777215</height>
          </size>
         </property>
