@@ -304,6 +304,24 @@ class MyWindow(QtWidgets.QMainWindow):
 
         return self.listWidget.currentRow()
 
+    def itemSelectionChanged (self):
+        # QMessageBox.information(self, "ListWidget", "You clicked: " + item.text())
+        # print(item)
+        index = self.listWidget.currentRow()
+
+        # df['purpose'].iloc[index]
+
+        print(df.iloc[index])
+
+        freq = str(df['nomFrq'].iloc[index] / 1000000) + "MHz"
+        purpose = str(df['purpose'].iloc[index])
+
+
+        self.label12.setText(str(freq))
+        self.label101.setText(purpose)
+
+        return self.listWidget.currentRow()
+
     def buttonClicked(self):
 
         search_text = self.lineEdit.text()
@@ -320,6 +338,7 @@ class MyWindow(QtWidgets.QMainWindow):
         self.listWidget.addItems(df['purpose'])
 
         self.listWidget.itemClicked.connect(self.listItemClicked)
+        self.listWidget.itemSelectionChanged.connect(self.itemSelectionChanged)
 
         # # test data
         # data = np.array([0.7,0.7,0.7,0.8,0.9,0.9,1.5,1.5,1.5,1.5])
