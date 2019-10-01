@@ -656,6 +656,15 @@ class MyWindow(QtWidgets.QMainWindow):
         ax1.tick_params(axis = 'y', colors = 'b')
 
         ax1.plot(bins, data, color='b', alpha = 1, label = "LTA", linewidth=0.5)
+
+        # Show the major grid lines with dark grey lines
+        ax1.grid(b=True, which='major', color='#666666', linestyle='-', alpha=0.5)
+
+        # Show the minor grid lines with very faint and almost transparent grey lines
+        ax1.minorticks_on()
+        ax1.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.2)
+
+
         fig.tight_layout()
 
         # plot
