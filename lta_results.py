@@ -39,16 +39,19 @@ connection = pyodbc.connect("Driver={SQL Server Native Client 11.0};"
 df = pd.DataFrame()
 df_plot = pd.DataFrame()
 
+unit_name = 'test1'
+# freq_nom = 26
+
 
 def main(search_text = "Siward"):
     global connection
     global df
+    # global freq_nom
 
 
 
     
-    unit_name = 'test1'
-    freq_nom = 26
+
 
     # register_matplotlib_converters()
     
@@ -68,10 +71,12 @@ def main(search_text = "Siward"):
 
     # command = "select * from measData where measData.fk_locID = '5A09D288-6325-431E-9664-ED7CA5A44FAE' and measData.frq <> '9999'"
 
-    command = "select * from runData where runData.purpose like '%" + str(search_text) + "%'"
+    command = "select * from runData where runData.purpose like '%" + str(search_text) + "%' or runData.comment like '%" + str(search_text) + "%' or runData.packetNumber like '%" + str(search_text) + "%' or runData.crystalNumber like '%" + str(search_text) + "%'"
 
 
     df = pd.read_sql(command, connection)
+
+    # print(df)
 
     # **********************************************************
 
@@ -86,7 +91,7 @@ def main(search_text = "Siward"):
     #
     # df.sort_values(['measDate'], ascending=[True], inplace=True)
     #
-    # df_freq = df['frq']
+    # df_freq = df['nomFrq']
     # df_freq_ppm = 1000000 * (df_freq - freq_nom_hz)/freq_nom_hz
     # df['frq_ppm'] = df_freq_ppm
     #
@@ -278,8 +283,8 @@ def plot(index):
     global df
     global df_plot
 
-    unit_name = 'test1'
-    freq_nom = 26
+    # unit_name = 'test1'
+    # freq_nom = 26
 
     # register_matplotlib_converters()
 
@@ -300,7 +305,11 @@ def plot(index):
 
     run_id = str(df['pk_runID'].iloc[index])
 
+    freq_nom = float(df['nomFrq'].iloc[index])
+
     print("run_id = " + str(run_id))
+
+    print("freq_nom = " + str(freq_nom))
 
     # command = "select * from measData where measData.fk_locID = '5A09D288-6325-431E-9664-ED7CA5A44FAE' and measData.frq <> '9999'"
 
@@ -352,7 +361,7 @@ def plot(index):
 
     result = result.sort_values(by=['measDate'])
 
-    print(result)
+    # print(result)
 
     # # test data
     # data = np.array([0.7,0.7,0.7,0.8,0.9,0.9,1.5,1.5,1.5,1.5])
@@ -549,7 +558,7 @@ def plot(index):
     #
     # plt.close(figFvIF)
 
-    return result
+    return result, freq_nom
 
 
 
@@ -619,18 +628,19 @@ class MyWindow(QtWidgets.QMainWindow):
         # QMessageBox.information(self, "ListWidget", "You clicked: " + item.text())
         # print(item)
         index = self.listWidget.currentRow()
-        result = plot(index)
+        result, freq_nom = plot(index)
+
+        print("freq_nom = " + str(freq_nom))
+
+        freq_ppm = 1000000 * (result['compFreq'] - freq_nom) / freq_nom
+
 
         # test data
         # data = np.array([0.7,0.7,0.7,0.8,0.9,0.9,1.5,1.5,1.5,1.5])
         fig, ax1 = plt.subplots()
         # bins = np.arange(0.6, 1.62, 0.02)
 
-
-        # data = result['compFreq'].to_numpy()
-        # bins = result['measDate'].to_numpy()
-
-        data = result['compFreq']
+        data = freq_ppm
         bins = result['measDate']
 
         # bins = bins.astype(float)
@@ -638,9 +648,14 @@ class MyWindow(QtWidgets.QMainWindow):
         # print(data)
         # print(bins)
 
-        # n1, bins1, patches1 = ax1.hist(data, bins, alpha=0.6, density=False, cumulative=False)
+        plotTitle = "Ageing data"
+        ax1.set_title(plotTitle)
+        ax1.set_xlabel('Time')
+        ax1.set_ylabel('Frequency, ppm', color='b')
 
-        ax1.plot(bins, data, color='b', alpha = 1, label = "LTA", linewidth=1)
+        ax1.tick_params(axis = 'y', colors = 'b')
+
+        ax1.plot(bins, data, color='b', alpha = 1, label = "LTA", linewidth=0.5)
         fig.tight_layout()
 
         # plot
