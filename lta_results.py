@@ -8,6 +8,7 @@ import pandas as pd
 
 import scipy.ndimage as ndimage
 import numpy as np
+import time
 
 from mpl_toolkits.axes_grid1 import host_subplot
 from PyQt5 import QtCore, QtWidgets, uic
@@ -357,9 +358,11 @@ def plot(index):
 
     # df_plot = df_plot.sort_values(by=['fk_locID', 'measDate'])
 
-    result = df_plot[df_plot['fk_locID'] == locations[1]]
+    result = df_plot
 
-    result = result.sort_values(by=['measDate'])
+    # result = df_plot[df_plot['fk_locID'] == locations[1]]
+    #
+    # result = result.sort_values(by=['measDate'])
 
     # print(result)
 
@@ -558,7 +561,7 @@ def plot(index):
     #
     # plt.close(figFvIF)
 
-    return result, freq_nom
+    return result, locations, freq_nom
 
 
 
@@ -625,37 +628,51 @@ class MyWindow(QtWidgets.QMainWindow):
         return self.listWidget.currentRow()
 
     def listItemDoubleClicked(self, item):
+        # try:
+        #     fig.clf()
+        #
+        # except:
+        #     pass
+
         # QMessageBox.information(self, "ListWidget", "You clicked: " + item.text())
         # print(item)
         index = self.listWidget.currentRow()
-        result, freq_nom = plot(index)
+        result, locations, freq_nom = plot(index)
 
         print("freq_nom = " + str(freq_nom))
 
-        freq_ppm = 1000000 * (result['compFreq'] - freq_nom) / freq_nom
-
-
-        # test data
-        # data = np.array([0.7,0.7,0.7,0.8,0.9,0.9,1.5,1.5,1.5,1.5])
         fig, ax1 = plt.subplots()
-        # bins = np.arange(0.6, 1.62, 0.02)
+        plotTitle = "Ageing data"
+        ax1.set_title(plotTitle)
+        ax1.set_xlabel('Time')
+        ax1.set_ylabel('Frequency, ppm')
+        # ax1.tick_params(axis = 'y', colors = 'b')
 
-        data = freq_ppm
-        bins = result['measDate']
+        for location in locations:
+
+            result_single = df_plot[df_plot['fk_locID'] == location]
+            result_single = result_single.sort_values(by=['measDate'])
+
+            freq_ppm = 1000000 * (result_single['compFreq'] - freq_nom) / freq_nom
+
+            data = freq_ppm
+            bins = result_single['measDate']
+
+            ax1.plot(bins, data, alpha=1, label="LTA", linewidth=0.5)
 
         # bins = bins.astype(float)
 
         # print(data)
         # print(bins)
 
-        plotTitle = "Ageing data"
-        ax1.set_title(plotTitle)
-        ax1.set_xlabel('Time')
-        ax1.set_ylabel('Frequency, ppm', color='b')
+        # ax1.clear()
 
-        ax1.tick_params(axis = 'y', colors = 'b')
 
-        ax1.plot(bins, data, color='b', alpha = 1, label = "LTA", linewidth=0.5)
+
+
+
+
+        # ax1.plot(bins, data-50, alpha=1, label="LTA", linewidth=0.5)
 
         # Show the major grid lines with dark grey lines
         ax1.grid(b=True, which='major', color='#666666', linestyle='-', alpha=0.5)
@@ -668,6 +685,7 @@ class MyWindow(QtWidgets.QMainWindow):
         fig.tight_layout()
 
         # plot
+        # self.plotWidget.clear()
         self.plotWidget = FigureCanvas(fig)
         lay = QtWidgets.QVBoxLayout(self.plot1)
         lay.setContentsMargins(0, 0, 0, 0)
@@ -675,6 +693,10 @@ class MyWindow(QtWidgets.QMainWindow):
 
         # add toolbar
         self.addToolBar(QtCore.Qt.BottomToolBarArea, NavigationToolbar(self.plotWidget, self))
+
+        # time.sleep(10)
+        # fig.clear()
+        # fig.clf()
 
 
 
