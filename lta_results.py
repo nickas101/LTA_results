@@ -278,7 +278,7 @@ class MyWindow(QtWidgets.QMainWindow):
         # plt.ion()
 
         fig, ax1 = plt.subplots()
-        plotTitle = "Ageing data for " + str(freq_nom_str) + ", " + str(crystal_type) + ", SAP number  " + str(crystal_number) + ", packet# = " + str(packet_number)
+        plotTitle = "Ageing data for " + str(freq_nom_str) + ", " + str(crystal_type) + ", SAP number " + str(crystal_number) + ", packet #" + str(packet_number)
         ax1.set_title(plotTitle)
         ax1.set_xlabel('Time')
         ax1.set_ylabel('Frequency, ppm')
