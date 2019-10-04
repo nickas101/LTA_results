@@ -76,6 +76,10 @@ def main(search_text = "Siward"):
 
 
     df = pd.read_sql(command, connection)
+
+    df['startDate'] = df['startDate'].dt.date
+    df['finishDate'] = df['finishDate'].dt.date
+
     result = df
 
 
@@ -218,16 +222,28 @@ class MyWindow(QtWidgets.QMainWindow):
         # print(item)
         index = self.listWidget.currentRow()
 
-        # df['purpose'].iloc[index]
-
-        # print(df.iloc[index])
-
         freq = str(df['nomFrq'].iloc[index] / 1000000) + "MHz"
         purpose = str(df['purpose'].iloc[index])
+        crystal_type = str(df['crystalType'].iloc[index])
+        owner = str(df['owner'].iloc[index])
+        sap = str(df['crystalNumber'].iloc[index])
 
+        df['startDate'] = df['startDate'].dt.date
+        df['finishDate'] = df['finishDate'].dt.date
+        start = str(df['startDate'].iloc[index])
+        finish = str(df['finishDate'].iloc[index])
+        jig = str(df['oscillator'].iloc[index])
+        packet = str(df['packetNumber'].iloc[index])
 
         self.label12.setText(str(freq))
         self.label101.setText(purpose)
+        self.label_7.setText(crystal_type)
+        self.label_15.setText(owner)
+        self.label_17.setText(sap)
+        self.label_13.setText(start)
+        self.label_21.setText(finish)
+        self.label_25.setText(jig)
+        self.label_27.setText(packet)
 
         return self.listWidget.currentRow()
 
@@ -236,22 +252,25 @@ class MyWindow(QtWidgets.QMainWindow):
         # print(item)
         index = self.listWidget.currentRow()
 
-        # df['purpose'].iloc[index]
-
-        # print(df.iloc[index])
-
         freq = str(df['nomFrq'].iloc[index] / 1000000) + "MHz"
         purpose = str(df['purpose'].iloc[index])
         crystal_type = str(df['crystalType'].iloc[index])
         owner = str(df['owner'].iloc[index])
         sap = str(df['crystalNumber'].iloc[index])
-
+        start = str(df['startDate'].iloc[index])
+        finish = str(df['finishDate'].iloc[index])
+        jig = str(df['oscillator'].iloc[index])
+        packet = str(df['packetNumber'].iloc[index])
 
         self.label12.setText(str(freq))
         self.label101.setText(purpose)
         self.label_7.setText(crystal_type)
         self.label_15.setText(owner)
         self.label_17.setText(sap)
+        self.label_13.setText(start)
+        self.label_21.setText(finish)
+        self.label_25.setText(jig)
+        self.label_27.setText(packet)
 
         return self.listWidget.currentRow()
 
@@ -379,7 +398,7 @@ class MyWindow(QtWidgets.QMainWindow):
 
         self.listWidget.addItems(df['purpose'])
 
-        self.listWidget.itemClicked.connect(self.listItemClicked)
+        # self.listWidget.itemClicked.connect(self.listItemClicked)
         self.listWidget.itemSelectionChanged.connect(self.itemSelectionChanged)
         self.listWidget.itemDoubleClicked.connect(self.listItemDoubleClicked)
 
