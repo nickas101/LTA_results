@@ -18,7 +18,7 @@ import matplotlib
 matplotlib.use('QT5Agg')
 
 import matplotlib.pylab as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvas 
+from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
 from matplotlib.figure import Figure
@@ -274,15 +274,19 @@ class MyWindow(QtWidgets.QMainWindow):
 
         return self.listWidget.currentRow()
 
-    def listItemDoubleClicked(self, item):
-        # try:
-        #     fig.clf()
-        #
-        # except:
-        #     pass
 
-        # QMessageBox.information(self, "ListWidget", "You clicked: " + item.text())
-        # print(item)
+
+
+    def listItemDoubleClicked(self, item):
+
+        self.pushButton_plot.setText("Wait...")
+        self.pushButton_2.setText("Wait...")
+        self.pushButton_2.setEnabled(False)
+        self.pushButton_plot.setEnabled(False)
+        QtWidgets.qApp.processEvents()
+
+        print('Start plotting!')
+
         index = self.listWidget.currentRow()
         result, locations = plot(index)
 
@@ -337,6 +341,20 @@ class MyWindow(QtWidgets.QMainWindow):
         # add toolbar
         tb = self.addToolBar(QtCore.Qt.BottomToolBarArea, NavigationToolbar(self.plotWidget, self))
 
+        print('Finish plotting!')
+
+        # self.plotWidget.draw()
+
+        self.pushButton_plot.setText("Plot")
+        self.pushButton_2.setText("Search")
+        self.pushButton_2.setDisabled(False)
+        self.pushButton_plot.setDisabled(False)
+        QtWidgets.qApp.processEvents()
+
+        # lay.removeWidget(self.plot1)
+        # self.plot1.deleteLater()
+        # self.plot1 = None
+
         # def unfill(self):
         #     def deleteItems(layout):
         #         if layout is not None:
@@ -362,23 +380,6 @@ class MyWindow(QtWidgets.QMainWindow):
         # fig.clear()
         # fig.clf()
 
-
-
-
-
-
-        # df['purpose'].iloc[index]
-
-        # print(df.iloc[index])
-        #
-        # freq = str(df['nomFrq'].iloc[index] / 1000000) + "MHz"
-        # purpose = str(df['purpose'].iloc[index])
-        #
-        #
-        # self.label12.setText(str(freq))
-        # self.label101.setText(purpose)
-        #
-        # return self.listWidget.currentRow()
 
     def buttonClicked(self):
 
